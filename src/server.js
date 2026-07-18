@@ -40,6 +40,28 @@ if (require.main === module) {
     console.log(`Server is running and listening on port ${PORT}`);
   });
 }
+app.get('/mul', (req, res) => {
+  const value1 = Number(req.query.x);
+  const value2 = Number(req.query.y);
+  const result = value1 * value2;
+  res.status(200).json({ result });
+});
+
+app.get('/div', (req, res) => {
+  const value1 = Number(req.query.x);
+  const value2 = Number(req.query.y);
+
+  // Guard clause against dividing by zero
+  if (value2 === 0) {
+    return res.status(400).json({ 
+      error: "Invalid input", 
+      message: "Division by zero is not allowed." 
+    });
+  }
+
+  const result = value1 / value2;
+  res.status(200).json({ result });
+});
 
 // Export app for testing
 module.exports = app;

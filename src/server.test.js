@@ -42,3 +42,21 @@ test('GET /sub check', async () => {
   // Assert 3: Does the JSON body say "healthy"?
   assert.equal(response.body.result, 2);
 });
+test('GET /mul check', async () => {
+  const response = await request(app).get('/mul?x=4&y=3');
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.result, 12);
+});
+
+test('GET /div check', async () => {
+  const response = await request(app).get('/div?x=12&y=3');
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.result, 4);
+});
+
+test('GET /div zero validation check', async () => {
+  const response = await request(app).get('/div?x=12&y=0');
+  // Asserting a 400 Bad Request status code
+  assert.equal(response.statusCode, 400);
+  assert.equal(response.body.error, "Invalid input");
+});
