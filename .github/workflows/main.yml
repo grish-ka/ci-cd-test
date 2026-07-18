@@ -1,0 +1,63 @@
+name: Node.js CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 🧠
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and run tests 🧪
+        run: |
+          npm install express
+          npm install --save-dev supertest
+          npm test
+  generate-docker-artifacts:
+    runs-on: ubuntu-latest
+    needs: test-and-build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 🧠
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and build Docker image 🐳
+        run: |
+          npm install express
+          npm install --save-dev supertest
+          echo "🔨 Building the Docker image..."  
+          # If the build fails, catch the error and exit
+          if ! docker build -t docker-ci-dummy-app:dev .; then
+              echo "❌ BUILD FAILED: Fix the errors above and try again."
+              exit 1
+          fi
+      - name: Test Artifacts
+        run: |
+          docker run -d -p 8080:3000 --name test-container docker-ci-dummy-app:dev
+          curl http://localhost:8080 | grep -q "healthy"
+          docker rm -f test-container
+
+      - name: Log in to Docker Hub 🔑
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - name: Push Docker image to Docker Hub 📦
+        run: |
+          docker tag docker-ci-dummy-app:dev grishkkka/docker-ci-dummy-app:latest
+          docker push grishkkka/docker-ci-dummy-app:latest
