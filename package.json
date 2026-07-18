@@ -1,0 +1,16 @@
+{
+  "name": "docker-ci-dummy-app",
+  "version": "1.0.0",
+  "description": "A simple Node.js app for testing GitHub Actions and Docker CI/CD",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test src/*.test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}
