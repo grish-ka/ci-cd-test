@@ -45,11 +45,11 @@ jobs:
               echo "❌ BUILD FAILED: Fix the errors above and try again."
               exit 1
           fi
-      - name: Test Artifacts
+      - name: Quick Test Artifacts
         run: |
           docker run -d -p 8080:3000 --name test-container docker-ci-dummy-app:dev
           sleep 5
-          curl http://localhost:8080 | grep -q "healthy"
+          curl http://localhost:8080/status | grep -q "healthy"
           docker rm -f test-container
 
       - name: Log in to Docker Hub 🔑
