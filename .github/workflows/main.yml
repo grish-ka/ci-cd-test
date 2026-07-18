@@ -48,6 +48,7 @@ jobs:
       - name: Test Artifacts
         run: |
           docker run -d -p 8080:3000 --name test-container docker-ci-dummy-app:dev
+          sleep 5
           curl http://localhost:8080 | grep -q "healthy"
           docker rm -f test-container
 
@@ -56,7 +57,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          
+
       - name: Push Docker image to Docker Hub 📦
         run: |
           docker tag docker-ci-dummy-app:dev grishkkka/docker-ci-dummy-app:latest
